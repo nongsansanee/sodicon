@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Socialite;
+use \App\User;
+use Inertia\Inertia;
 
 class LoginController extends Controller
 {
@@ -61,21 +63,53 @@ class LoginController extends Controller
      */
     public function handleGoogleCallback()
     {
+         //----------driver จะไปอ่าน services.php  parameter  ต้องตั้งชื่อตรงกัน ในที่นี่คือ google ต้องตรงกับในไฟล์ services.php------------
         $user = Socialite::driver('google')->user();
-        //driver จะไปอ่าน services.php
-        dd($user);
-        // All Providers
+       
+
+       
+
+        //-------------dd() = die dump---------------
+        // dd($user);
+
+        //-------------- All Providers----------------
         // $user->getId();
         // $user->getNickname();
         // $user->getName();
         // $user->getEmail();
         // $user->getAvatar();
-        session(['googleUser'=> $user]);
 
-        // find google+userId in users table
-        // if not found => new user => redirect to register page
+        // return $user->getId();
 
-        // if found =>  login user
+        // session(['googleUser'=> $user]);
+
+        //--------find google+userId in users table-----------
+
+            $user_count = \App\User::where([
+                                        ['social_id','=',$user->getId()],
+                                        ['social_name','=','google']
+                                    ])->count();
+
+        //-----------if not found => new user => redirect to register page-------------
+           if($user_count==0){
+               //redirect to register page
+            //    return Inertia::render('Welcome',[]);
+               return Inertia::render('Register', [
+                                            'social_id'=>$user->getId(),
+                                            'name'=>$user->getName(),
+                                            'email'=>$user->getEmail(),
+                                            'avatar'=>$user->getAvatar(),
+               ]);
+            //    return view('register',[
+            //                             'social_id'=>$user->getId(),
+            //                             'name'=>$user->getName(),
+            //                             'email'=>$user->getEmail(),
+            //                             'avatar'=>$user->getAvatar(),
+            //                           ]);
+            //    return $user->getName();
+           }
+
+        //------------- if found =>  login user-----------------
         //auth()
 
         if(!$user->getEmail()){
@@ -84,5 +118,10 @@ class LoginController extends Controller
 
         return redirect('/')->with('user',$user);
         // $user->token;
+    }
+
+    public function register(){
+        return "register";
+        return Request::all();
     }
 }

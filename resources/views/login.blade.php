@@ -6,8 +6,8 @@
     <title>Document</title>
 </head>
 <body>
-    <a href="/login/google">Google</a>
-    <a href="/login/facebook">Facebook</a>
-    <a href="/login/twitter">Twitter</a>
+    <a href="/login/google">Google</a><br>
+    <a href="/login/facebook">Facebook</a><br>
+    <a href="/login/twitter">Twitter</a><br>
 </body>
 </html>
